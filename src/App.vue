@@ -1,10 +1,8 @@
-<template>
-  <v-app>
-    <Navigation/>
-    <v-content>
-      dasdsa
-    </v-content>
-  </v-app>
+<template lang="pug">
+  v-app
+    Navigation
+      v-content
+        router-view
 </template>
 
 <script>
