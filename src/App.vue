@@ -2,7 +2,7 @@
   <v-app>
     <Navigation/>
     <v-content>
-      dasdsa
+      <router-view/>
     </v-content>
   </v-app>
 </template>
