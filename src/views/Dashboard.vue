@@ -1,5 +1,5 @@
 <template lang="pug">
-    v-container 
+    v-container.dashboard-container 
         p.tab-header Favorite
         v-container(fluid grid-list-sm)
           v-layout(row wrap)
@@ -11,7 +11,7 @@
             v-tab-item(v-for="tab in tabs" :key="tab.key")
                 v-container(fluid grid-list-sm)
                     v-layout(row wrap)
-                        v-flex.align-center.xtra-m-b(v-for="(item,index) in getCollection(tab.key)" :key="`item-${index}`" xs2) 
+                        v-flex.collection-item.align-center.xtra-m-b(v-for="(item,index) in getCollection(tab.key)" :key="`item-${index}`" xs2) 
                             v-img.margin-auto(:src="getImgUrl(item.pic)" aspect-ratio="1" max-width="160")
                             span {{item.title}}
 </template>
@@ -69,7 +69,8 @@ export default {
     }
 }
 </script>
-<style>
+<style lang="scss">
+  .dashboard-container {
     .tab-header{
         color: #50349B;
         font-size: 24px;
@@ -77,7 +78,7 @@ export default {
     .align-center{
         text-align: center;
     }
-    span{
+    span:not(.v-ripple__container){
         color: #50349B;
         font-size: 18px;
         text-transform: initial;
@@ -101,6 +102,9 @@ export default {
     .v-tabs__item::first-letter{
         text-transform: uppercase!important;
     }
+    .collection-item {
+      cursor: pointer;
+    }
     .v-tabs__slider{
         height: 4px;
         border-top-left-radius: 10px;
@@ -109,4 +113,5 @@ export default {
     .xtra-m-b{
         margin-bottom: 25px;
     }
+  }
 </style>
