@@ -4,10 +4,8 @@
       p.table__header--title Browse Directory
       v-layout.xs6.pa-2
         img.mt-3.v-table-filter(src='@/assets/images/icon-filter.png')
-        v-flex.xs1
-          v-select.ml-3(label="Division", solo=true, :items='[7, 14, 21]')
-        v-flex.xs1
-          v-select.ml-3(label="Department", solo=true, :items='[7, 14, 21]')
+        v-flex(v-for='filter in filters', :key='filter.key').xs2
+          v-select.ml-3(:label="filter.key", solo=true, :items='filter.data', v-on:change='selectedFilter(filter.key, $event)')
       v-flex.xs6
     table.v-datatable.v-table.theme--light
       thead.v-table__head
@@ -79,8 +77,8 @@
           },
           { text: 'Job Title', value: 'job' },
           { text: 'Organisation', value: 'organisation' },
-          { text: 'Division', value: 'division' },
-          { text: 'Department', value: 'department' },
+          { text: 'Division', value: 'division', filter: true },
+          { text: 'Department', value: 'department', filter: true },
           { text: 'Email', value: 'email' },
           { text: 'Direct Dial', value: 'phone' },
           { text: 'Work mobile', value: 'mobile' },
@@ -91,7 +89,7 @@
             name: 'Johnny Turnner1',
             job: 'Secretary',
             organisation: 'SLIM - Singapore RHQ',
-            division: 'Human resources',
+            division: 'Human resources1',
             department: 'hr/admin',
             email: 'miketurner@gmail.com',
             phone: '0918765421',
@@ -103,7 +101,7 @@
             job: 'Secretary',
             organisation: 'SLIM - Singapore RHQ',
             division: 'Human resources',
-            department: 'hr/admin',
+            department: 'hr/admin3',
             email: 'miketurner@gmail.com',
             phone: '0918765421',
             mobile: '0987654321',
@@ -174,8 +172,13 @@
             phone: '0918765421',
             mobile: '0987654321',
           },
-        ]
+        ],
+        datatabletmp: [],
+        filters: []
       }
+    },
+    mounted() {
+      this.getFilter();
     },
     methods: {
       selectedPagination(pos) {
@@ -183,6 +186,27 @@
       },
       selectedSort(event, header) {
         sortColumn(event, this.datatable, header);
+      },
+      getFilter(){
+        this.headers.find((item) => {
+          if(item.filter) {
+            let temp = {
+              key: item.value,
+              data: []
+            };
+            this.datatable.every((data) => {
+              if(data[item.value]) {
+                temp.data.push(data[item.value])
+              }
+            })
+            this.filters.push(temp)
+          }
+        })
+      },
+      selectedFilter(key, value){
+        console.log(value)
+        this.datatabletmp = this.datatable;
+        this.datatable = this.datatable.filter((item) => item[key] == value)
       }
     }
   }
