@@ -13,10 +13,5 @@ export default {
   components: {
     Navigation
   },
-  data () {
-    return {
-      //
-    }
-  }
 }
 </script>
