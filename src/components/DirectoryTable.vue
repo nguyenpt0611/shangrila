@@ -1,15 +1,26 @@
 <template lang="pug">
   div.v-table
-    v-flex.v-table__header
-      p.table__header--title Browse Directory
-      v-layout.xs6.pa-2
-        img.mt-3.v-table-filter(src='@/assets/images/icon-filter.png')
-        v-flex(v-for='filter in table.filter.items', :key='filter.key').xs2
-          v-select.ml-3(:label="filter.key", solo=true, multiple=true, v-model='table.filter.itemsSlected', :items='filter.data', @change='selectedFilter(filter.key, $event)')
-            div(slot="prepend-item", ripple)
-              a.v-list__tile.v-list__tile--link.theme--light(@click='clearFilter()')
-                a.v-list__title Clear all
-      v-flex.xs6
+    v-layout.row.wrap.v-table__header
+      v-flex.xs12
+        p.table__header--title Browse Directory
+      v-flex.xs6 
+        v-layout.xs6.pa-2
+          img.mt-3.v-table-filter(src='@/assets/images/icon-filter.png')
+          v-flex(v-for='filter in table.filter.items', :key='filter.key').xs4
+            v-select.ml-3(:label="filter.key", solo=true, multiple=true,
+            :menu-props="{ maxHeight: '400' }", 
+            v-model='table.filter.itemsSlected', :items='filter.data', @change='selectedFilter(filter.key, $event)')
+              div(slot="prepend-item", ripple)
+                a.v-list__tile.v-list__tile--link.theme--light(@click='clearFilter()')
+                  a.v-list__title Clear all
+              template(slot='selection', slot-scope="{ item, index }")
+                span(v-if="index === 0") {{item}}  
+                span.grey--text.caption(v-if="index === 1") (+{{ table.filter.itemsSlected.length - 1}} others)
+      v-flex.xs6.d-flex.justify-end
+        v-text-field.v-table__search-bar(hide-details,append-icon="search", clearable,single-line, solo, label='Seach', @click:append='handleSearch()', 
+        @keyup.enter='handleSearch()',@click:clear='handleClearSearch()', v-model='table.search.text')
+          v-btn(icon)
+            v-icon search
     table.v-datatable.v-table.theme--light
       thead.v-table__head
         tr
@@ -196,6 +207,9 @@
             items: [],
             itemsSlected: [],
           },
+          search: {
+            text: ''
+          }
         },
         // Declared variables
         imgAvt: require('@/assets/images/avt.png'),
@@ -274,6 +288,17 @@
         this.table.filter.itemsSlected = [];
         this.table.data = this.table.dataSave;
         this.fetchingTable();
+      },
+      // Search bar
+      handleSearch(){
+        this.table.data = this.table.dataSave;
+        if(this.table.search.text != null)
+          this.table.data = this.table.data.filter(item => Object.keys(item).some(key => item[key].toString().toUpperCase().includes(this.table.search.text.toUpperCase())))
+        this.fetchingTable();
+      },
+      handleClearSearch(){
+        this.table.search.text = null;
+        this.handleSearch();
       }
     }
   }
@@ -292,6 +317,9 @@
           opacity: 0;
         }
       }
+    }
+    &__search-bar {
+      max-width: 80%;
     }
   }
   .v-pagination {
