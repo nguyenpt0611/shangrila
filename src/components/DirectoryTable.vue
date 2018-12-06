@@ -17,7 +17,7 @@
                   a.v-list__title Clear all
               template(slot='selection', slot-scope="{ item, index }")
                 span(v-if="index === 0") {{item}}  
-                //- span.grey--text.caption(v-if="index === 1") (+{{ table.filter.itemsSelected.length - 1}} others)
+                span.grey--text.caption(v-if="index === 1") (+{{ table.filter.itemsSelected[filter.key].length - 1}} others)
       v-flex.xs6.d-flex.justify-end
         v-text-field.v-table__search-bar(hide-details,append-icon="search", clearable,single-line, solo, label='Seach', @click:append='handleSearch()', 
         @keyup.enter='handleSearch()',@click:clear='handleClearSearch()', v-model='table.search.text')
@@ -48,7 +48,7 @@
           td 
             v-layout.align-center
               span {{employee.mobile}}
-              v-btn(fab, icon, small)
+              v-btn(fab, icon, small, @click.stop="handleDetail(employee)")
                 img(src='@/assets/images/icon-detail.png')
     v-layout(align-center).v-datatable.v-table.v-datatable__actions
       v-flex(justify-start).xs4.v-datatable__actions__select
@@ -74,6 +74,47 @@
               v-btn.v-pagination-nav(flat, :disabled='page.currentPage == pagination.showSize ? true : false', @click='handlePagination(page.currentPage += 1)') Next
             li
               v-btn.v-pagination-nav(flat, :disabled='page.currentPage == pagination.showSize ? true : false', @click='handlePagination(pagination.showSize)') Last
+    v-navigation-drawer(v-model="drawer",absolute, right, width='440', temporary, hide-overlay)
+      v-container
+        v-layout.column.v-table__nav-drawer
+          v-flex.xs-12
+            v-badge.d-flex.justify-center.v-badge__custom(bottom)
+              img(size='50',src='@/assets/images/icon-detail-badge.png', slot="badge")
+              v-avatar(size='158')
+                img(src='@/assets/images/example_avt.png')
+          v-flex.xs-12
+            v-layout.column.wrap.detail-wrapper
+              v-flex.xs-12.pt-3
+                h6.title Name
+                p.mt-2.title.font-weight-light {{selectedData.name}}
+              v-flex.xs-12.pt-3
+                h6.title Gender
+                p.mt-2.title.font-weight-light {{selectedData.name}}
+              v-flex.xs-12.pt-3
+                h6.title Jobtitle
+                p.mt-2.title.font-weight-light {{selectedData.job}}
+              v-flex.xs-12.pt-3
+                h6.title Organisation
+                p.mt-2.title.font-weight-light {{selectedData.organisation}}
+              v-flex.xs-12.pt-3
+                h6.title Division
+                p.mt-2.title.font-weight-light {{selectedData.division}}
+              v-flex.xs-12.pt-3
+                h6.title Department
+                p.mt-2.title.font-weight-light {{selectedData.department}}
+              v-flex.xs-12.pt-3
+                h6.title Email
+                p.mt-2.title.font-weight-light {{selectedData.email}}
+              v-layout
+                v-flex.xs-6.pt-3
+                  h6.title Direct Dial
+                  p.mt-2.title.font-weight-light {{selectedData.phone}}
+                v-flex.xs-6.pt-3
+                  h6.title Work Mobile
+                  p.mt-2.title.font-weight-light {{selectedData.mobile}}
+              v-layout.xs-12.mt-2.justify-center
+                v-btn.mt4(float, color='#fff', :style="{ width: '85%'}") 
+                  span(:style="{color: '#7D75FF'}") Reporting Manager
 </template>
 
 <script>
@@ -209,13 +250,15 @@
           // Filter data
           filter: {
             items: [],
-            itemsSelected: {},
-            status: 0
+            itemsSelected: {}
           },
           search: {
             text: ''
           }
         },
+        // table drawer
+        drawer: null,
+        selectedData: {},
         // Declared variables
         imgAvt: require('@/assets/images/avt.png'),
       }
@@ -236,6 +279,10 @@
       },
       getShowData(){
         this.table.showData = this.table.data.slice(this.pagination.showFromEntry - 1, this.pagination.showToEntry);
+      },
+      handleDetail(data){
+        this.drawer = !this.drawer
+        this.selectedData = data;
       },
       // Sort Table
       selectedSort(event, header) {
@@ -314,7 +361,7 @@
   }
 </script>
 
-<style lang='scss' scoped>
+<style lang='scss'>
   .v-table {
     &-filter {
       height: 24px;
@@ -346,5 +393,13 @@
       padding: 0px;
       margin: 5px;
     }
+  }
+  .title {
+    color:#333333;
+  }
+  .v-badge__badge {
+    left: 55%;
+    width: 50px!important;
+    height: 50px!important;
   }
 </style>
