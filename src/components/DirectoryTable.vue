@@ -5,17 +5,19 @@
         p.table__header--title Browse Directory
       v-flex.xs6 
         v-layout.xs6.pa-2
-          img.mt-3.v-table-filter(src='@/assets/images/icon-filter.png')
+          img.mt-3.v-table-filter(v-if='isFiltering() == -1', src='@/assets/images/icon-filter.png')
+          img.mt-3.v-table-filter(v-if='isFiltering() > -1', src='@/assets/images/icon-filter-active.png')
           v-flex(v-for='filter in table.filter.items', :key='filter.key').xs4
             v-select.ml-3(:label="filter.key", solo=true, multiple=true,
-            :menu-props="{ maxHeight: '400' }", 
-            v-model='table.filter.itemsSlected', :items='filter.data', @change='selectedFilter(filter.key, $event)')
+            :menu-props="{ maxHeight: '400' }",
+            v-model='table.filter.itemsSelected[filter.key]' 
+            :items='filter.data', @change='selectedFilter(filter.key, $event)')
               div(slot="prepend-item", ripple)
-                a.v-list__tile.v-list__tile--link.theme--light(@click='clearFilter()')
+                a.v-list__tile.v-list__tile--link.theme--light(@click='clearFilter(filter.key)')
                   a.v-list__title Clear all
               template(slot='selection', slot-scope="{ item, index }")
                 span(v-if="index === 0") {{item}}  
-                span.grey--text.caption(v-if="index === 1") (+{{ table.filter.itemsSlected.length - 1}} others)
+                //- span.grey--text.caption(v-if="index === 1") (+{{ table.filter.itemsSelected.length - 1}} others)
       v-flex.xs6.d-flex.justify-end
         v-text-field.v-table__search-bar(hide-details,append-icon="search", clearable,single-line, solo, label='Seach', @click:append='handleSearch()', 
         @keyup.enter='handleSearch()',@click:clear='handleClearSearch()', v-model='table.search.text')
@@ -52,6 +54,8 @@
       v-flex(justify-start).xs4.v-datatable__actions__select
         v-flex.xs4
           v-select(label="No field", solo=true, :items='[4, 7, 21]', v-model='page.pageSize', @change='handleChangePageSize()')
+            template(slot="selection",slot-scope="{ item, index }")
+              span Show {{item}} entries
       v-flex.xs4.v-datatable__actions__range--control
         div.v-datatable__actions__pagination Showing {{pagination.showFromEntry}} to {{pagination.showToEntry}} of {{table.size}} entries
       v-flex.xs4.v-datatable__actions__range--control
@@ -205,7 +209,8 @@
           // Filter data
           filter: {
             items: [],
-            itemsSlected: [],
+            itemsSelected: {},
+            status: 0
           },
           search: {
             text: ''
@@ -274,18 +279,23 @@
               }
             })
             this.table.filter.items.push(temp)
+            this.table.filter.itemsSelected[item.value] = [];
           }
         })
       },
+      isFiltering(){
+        return this.table.filter.items.findIndex(item => this.table.filter.itemsSelected[item.key].length > 0)
+      },
       selectedFilter(key, value){
         this.table.data = this.table.dataSave;
-        if(this.table.filter.itemsSlected.length > 0) {
+        this.table.filter.itemsSelected[key] = value;
+        if(this.table.filter.itemsSelected[key].length > 0) {
           this.table.data = this.table.data.filter((item) => value.find(val => val == item[key]))
         }
         this.fetchingTable();
       },
-      clearFilter(){
-        this.table.filter.itemsSlected = [];
+      clearFilter(key){
+        this.table.filter.itemsSelected[key] = [];
         this.table.data = this.table.dataSave;
         this.fetchingTable();
       },
@@ -320,6 +330,11 @@
     }
     &__search-bar {
       max-width: 80%;
+    }
+    tbody tr:hover:not(.v-datatable__expand-row) {
+      box-shadow: 0px 7px 8px -4px rgba(0,0,0,0.2), 0px 12px 17px 2px rgba(0,0,0,0.14), 0px 5px 22px 4px rgba(0,0,0,0.12) !important;
+      background: #ffffff;
+      cursor: pointer;
     }
   }
   .v-pagination {
