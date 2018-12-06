@@ -4,61 +4,61 @@
       p.table__header--title Browse Directory
       v-layout.xs6.pa-2
         img.mt-3.v-table-filter(src='@/assets/images/icon-filter.png')
-        v-flex(v-for='filter in filters', :key='filter.key').xs2
-          v-select.ml-3(:label="filter.key", solo=true, multiple=true, v-model='filterSelected', :items='filter.data', v-on:change='selectedFilter(filter.key, $event)')
+        v-flex(v-for='filter in table.filter.items', :key='filter.key').xs2
+          v-select.ml-3(:label="filter.key", solo=true, multiple=true, v-model='table.filter.itemsSlected', :items='filter.data', @change='selectedFilter(filter.key, $event)')
             div(slot="prepend-item", ripple)
-              a.v-list__tile.v-list__tile--link.theme--light(v-on:click='clearFilter()')
+              a.v-list__tile.v-list__tile--link.theme--light(@click='clearFilter()')
                 a.v-list__title Clear all
       v-flex.xs6
     table.v-datatable.v-table.theme--light
       thead.v-table__head
         tr
-          th.text-xs-left.column(v-for='header in headers', :class='{sortable: header.sortable ? header.sortable : false}', 
-          v-on:click='selectedSort($event, header)',
+          th.text-xs-left.column(v-for='header in table.headers', :class='{sortable: header.sortable ? header.sortable : false}', 
+          @click='selectedSort($event, header)',
           sort='none' )
             span {{header.text}}
             v-icon(v-if='header.sortable' size='16px') arrow_upward
       tbody
-        tr(v-for='(dessert, index) in datatable' v-if='index < selected')
+        tr(v-for='(employee, index) in table.showData')
           td.pa-2
             v-layout.align-center
               v-avatar
                 v-img(:src='imgAvt')
-              span.ml-2 {{dessert.name}}
-          td {{dessert.job}}
-          td {{dessert.organisation}}
-          td {{dessert.division}}
-          td {{dessert.department}}
+              span.ml-2 {{employee.name}}
+          td {{employee.job}}
+          td {{employee.organisation}}
+          td {{employee.division}}
+          td {{employee.department}}
           td 
-            a(:href="'mailto:'+dessert.email") {{dessert.email}}
-          td {{dessert.phone}}
+            a(:href="'mailto:'+employee.email") {{employee.email}}
+          td {{employee.phone}}
           td 
             v-layout.align-center
-              span {{dessert.mobile}}
+              span {{employee.mobile}}
               v-btn(fab, icon, small)
                 img(src='@/assets/images/icon-detail.png')
     v-layout(align-center).v-datatable.v-table.v-datatable__actions
       v-flex(justify-start).xs4.v-datatable__actions__select
         v-flex.xs4
-          v-select(label="No field", solo=true, :items='[4, 7, 21]', v-model='selected')
+          v-select(label="No field", solo=true, :items='[4, 7, 21]', v-model='page.pageSize', @change='handleChangePageSize()')
       v-flex.xs4.v-datatable__actions__range--control
-        div.v-datatable__actions__pagination Showing 1 to 7 of {{length}} entries
+        div.v-datatable__actions__pagination Showing {{pagination.showFromEntry}} to {{pagination.showToEntry}} of {{table.size}} entries
       v-flex.xs4.v-datatable__actions__range--control
         v-flex.v-pagination
           ul.v-pagination
             li
-              v-btn.v-pagination-nav(flat, :disabled='page == 1 ? true : false', v-on:click='page = 1') First
+              v-btn.v-pagination-nav(flat, :disabled='page.currentPage == 1 ? true : false', @click='handlePagination(1)') First
             li
-              v-btn.v-pagination-nav(flat, :disabled='page == 1 ? true : false', v-on:click='page -= 1') Previous
-            template(v-for='item in 4')
+              v-btn.v-pagination-nav(flat, :disabled='page.currentPage == 1 ? true : false', @click='handlePagination(page.currentPage -= 1)') Previous
+            template(v-for='item in pagination.showSize')
               li
-                v-btn(flat, fab, :outline='item == page ? true : false', 
-                :color='item == page ? "#7D75FF" : "#2c2c2c"',
-                v-on:click='selectedPagination(item)').pagination-item {{item}}
+                v-btn(flat, fab, :outline='item == page.currentPage ? true : false', 
+                :color='item == page.currentPage ? "#7D75FF" : "#2c2c2c"',
+                @click='handlePagination(item)').pagination-item {{item}}
             li
-              v-btn.v-pagination-nav(flat, :disabled='page == length ? true : false', v-on:click='page += 1') Next
+              v-btn.v-pagination-nav(flat, :disabled='page.currentPage == pagination.showSize ? true : false', @click='handlePagination(page.currentPage += 1)') Next
             li
-              v-btn.v-pagination-nav(flat, :disabled='page == length ? true : false', v-on:click='page = length') Last
+              v-btn.v-pagination-nav(flat, :disabled='page.currentPage == pagination.showSize ? true : false', @click='handlePagination(pagination.showSize)') Last
 </template>
 
 <script>
@@ -67,155 +67,213 @@
     name: 'DirectoryTable',
     data() {
       return {
-        selected: 4,
-        length: 8,
-        page: 1,
+        // Page variables
+        page: {
+          pageSize: 4,
+          currentPage: 1,
+          currentPageData: [],
+        },
+        // Pagination varialbes
+        pagination: {
+          size: 0,
+          maxSize: 4,
+          showSize: 0,
+          showFromEntry: 0,
+          showToEntry: 0,
+        },
+        // Table data
+        table: {
+          headers: [
+            {
+              text: 'Name',
+              align: 'left',
+              sortable: true,
+              value: 'name'
+            },
+            { text: 'Job Title', value: 'job' },
+            { text: 'Organisation', value: 'organisation' },
+            { text: 'Division', value: 'division', filter: true },
+            { text: 'Department', value: 'department', filter: true },
+            { text: 'Email', value: 'email' },
+            { text: 'Direct Dial', value: 'phone' },
+            { text: 'Work mobile', value: 'mobile' },
+          ],
+          size: 0,
+          showData: [],
+          data: [
+            {
+              value: false,
+              name: 'Johnny Turnner1',
+              job: 'Secretary',
+              organisation: 'SLIM - Singapore RHQ',
+              division: 'Human resources1',
+              department: 'hr/admin',
+              email: 'miketurner@gmail.com',
+              phone: '0918765421',
+              mobile: '0987654321',
+            },
+            {
+              value: false,
+              name: 'Johnny Turnner2',
+              job: 'Secretary',
+              organisation: 'SLIM - Singapore RHQ',
+              division: 'Human resources',
+              department: 'hr/admin3',
+              email: 'miketurner@gmail.com',
+              phone: '0918765421',
+              mobile: '0987654321',
+            },
+            {
+              value: false,
+              name: 'Johnny Turnner3s',
+              job: 'Secretary',
+              organisation: 'SLIM - Singapore RHQ',
+              division: 'Human resources',
+              department: 'hr/admin',
+              email: 'miketurner@gmail.com',
+              phone: '0918765421',
+              mobile: '0987654321',
+            },
+            {
+              value: false,
+              name: 'Johnny Turnner',
+              job: 'Secretary',
+              organisation: 'SLIM - Singapore RHQ',
+              division: 'Human resources 2',
+              department: 'hr/admin',
+              email: 'miketurner@gmail.com',
+              phone: '0918765421',
+              mobile: '0987654321',
+            },
+            {
+              value: false,
+              name: 'Johnny Turnner',
+              job: 'Secretary',
+              organisation: 'SLIM - Singapore RHQ',
+              division: 'Human resources',
+              department: 'hr/admin',
+              email: 'miketurner@gmail.com',
+              phone: '0918765421',
+              mobile: '0987654321',
+            },
+            {
+              value: false,
+              name: 'Johnny Turnner',
+              job: 'Secretary',
+              organisation: 'SLIM - Singapore RHQ',
+              division: 'Human resources',
+              department: 'hr/admin',
+              email: 'miketurner@gmail.com',
+              phone: '0918765421',
+              mobile: '0987654321',
+            },
+            {
+              value: false,
+              name: 'Johnny Turnner',
+              job: 'Secretary',
+              organisation: 'SLIM - Singapore RHQ',
+              division: 'Human resources',
+              department: 'hr/admin',
+              email: 'miketurner@gmail.com',
+              phone: '0918765421',
+              mobile: '0987654321',
+            },
+            {
+              value: false,
+              name: 'Johnny Turnner',
+              job: 'Secretary',
+              organisation: 'SLIM - Singapore RHQ',
+              division: 'Human resources',
+              department: 'hr/admin',
+              email: 'miketurner@gmail.com',
+              phone: '0918765421',
+              mobile: '0987654321',
+            },
+          ],
+          dataSave: [],
+          // Filter data
+          filter: {
+            items: [],
+            itemsSlected: [],
+          },
+        },
+        // Declared variables
         imgAvt: require('@/assets/images/avt.png'),
-        headers: [
-          {
-            text: 'Name',
-            align: 'left',
-            sortable: true,
-            value: 'name'
-          },
-          { text: 'Job Title', value: 'job' },
-          { text: 'Organisation', value: 'organisation' },
-          { text: 'Division', value: 'division', filter: true },
-          { text: 'Department', value: 'department', filter: true },
-          { text: 'Email', value: 'email' },
-          { text: 'Direct Dial', value: 'phone' },
-          { text: 'Work mobile', value: 'mobile' },
-        ],
-        datatable: [
-          {
-            value: false,
-            name: 'Johnny Turnner1',
-            job: 'Secretary',
-            organisation: 'SLIM - Singapore RHQ',
-            division: 'Human resources1',
-            department: 'hr/admin',
-            email: 'miketurner@gmail.com',
-            phone: '0918765421',
-            mobile: '0987654321',
-          },
-          {
-            value: false,
-            name: 'Johnny Turnner2',
-            job: 'Secretary',
-            organisation: 'SLIM - Singapore RHQ',
-            division: 'Human resources',
-            department: 'hr/admin3',
-            email: 'miketurner@gmail.com',
-            phone: '0918765421',
-            mobile: '0987654321',
-          },
-          {
-            value: false,
-            name: 'Johnny Turnner3s',
-            job: 'Secretary',
-            organisation: 'SLIM - Singapore RHQ',
-            division: 'Human resources',
-            department: 'hr/admin',
-            email: 'miketurner@gmail.com',
-            phone: '0918765421',
-            mobile: '0987654321',
-          },
-          {
-            value: false,
-            name: 'Johnny Turnner',
-            job: 'Secretary',
-            organisation: 'SLIM - Singapore RHQ',
-            division: 'Human resources 2',
-            department: 'hr/admin',
-            email: 'miketurner@gmail.com',
-            phone: '0918765421',
-            mobile: '0987654321',
-          },
-          {
-            value: false,
-            name: 'Johnny Turnner',
-            job: 'Secretary',
-            organisation: 'SLIM - Singapore RHQ',
-            division: 'Human resources',
-            department: 'hr/admin',
-            email: 'miketurner@gmail.com',
-            phone: '0918765421',
-            mobile: '0987654321',
-          },
-          {
-            value: false,
-            name: 'Johnny Turnner',
-            job: 'Secretary',
-            organisation: 'SLIM - Singapore RHQ',
-            division: 'Human resources',
-            department: 'hr/admin',
-            email: 'miketurner@gmail.com',
-            phone: '0918765421',
-            mobile: '0987654321',
-          },
-          {
-            value: false,
-            name: 'Johnny Turnner',
-            job: 'Secretary',
-            organisation: 'SLIM - Singapore RHQ',
-            division: 'Human resources',
-            department: 'hr/admin',
-            email: 'miketurner@gmail.com',
-            phone: '0918765421',
-            mobile: '0987654321',
-          },
-          {
-            value: false,
-            name: 'Johnny Turnner',
-            job: 'Secretary',
-            organisation: 'SLIM - Singapore RHQ',
-            division: 'Human resources',
-            department: 'hr/admin',
-            email: 'miketurner@gmail.com',
-            phone: '0918765421',
-            mobile: '0987654321',
-          },
-        ],
-        datatabletmp: [],
-        filters: [],
-        filterSelected: []
       }
     },
     mounted() {
-      this.datatabletmp = this.datatable;
+      this.table.dataSave = this.table.data;
+      this.table.size = this.table.data.length;
+
+      this.fetchingTable();
       this.getFilter();
     },
     methods: {
-      selectedPagination(pos) {
-        this.page = pos;
+      // Table funcs
+      fetchingTable(){
+        this.setShowPagination(this.table.data, this.page.pageSize);
+        this.setShowEntries();
+        this.getShowData();
       },
+      getShowData(){
+        this.table.showData = this.table.data.slice(this.pagination.showFromEntry - 1, this.pagination.showToEntry);
+      },
+      // Sort Table
       selectedSort(event, header) {
-        sortColumn(event, this.datatable, header);
+        sortColumn(event, this.table.showData, header);
       },
+      // Pagination funcs
+      setShowPagination(dataTable, pageSize) {
+        let div = dataTable.length/pageSize;
+        let showSize = Math.floor(div);
+
+        if((div - showSize) > 0)
+          showSize++;
+        this.pagination.size = showSize;
+        this.pagination.showSize = this.pagination.size > this.pagination.maxSize ? this.pagination.maxSize : this.pagination.size;
+      },
+      setShowEntries(){
+        this.pagination.showFromEntry = this.page.pageSize * (this.page.currentPage - 1) + 1;
+        this.pagination.showToEntry = this.pagination.showFromEntry + this.page.pageSize - 1;
+        if(this.pagination.showToEntry > this.table.size)
+          this.pagination.showToEntry = this.table.size;
+      },
+      handleChangePageSize(){
+        this.fetchingTable();
+      },
+      handlePagination(pos) {
+        this.page.currentPage = pos;
+        this.setShowEntries();
+        this.getShowData();
+      },
+      // Filter funcs
       getFilter(){
-        this.headers.find((item) => {
+        this.table.headers.find((item) => {
           if(item.filter) {
             let temp = {
               key: item.value,
               data: []
             };
-            this.datatable.forEach((data) => {
+            this.table.data.forEach((data) => {
               if(data[item.value]) {
                 temp.data.push(data[item.value])
               }
             })
-            this.filters.push(temp)
+            this.table.filter.items.push(temp)
           }
         })
       },
       selectedFilter(key, value){
-        this.datatable = this.datatabletmp
-        if(this.filterSelected.length > 0)
-          this.datatable = this.datatable.filter((item) => value.find(val => val == item[key]))
+        this.table.data = this.table.dataSave;
+        if(this.table.filter.itemsSlected.length > 0) {
+          this.table.data = this.table.data.filter((item) => value.find(val => val == item[key]))
+        }
+        this.fetchingTable();
       },
       clearFilter(){
-        this.filterSelected = [],
-        this.datatable = this.datatabletmp
+        this.table.filter.itemsSlected = [];
+        this.table.data = this.table.dataSave;
+        this.fetchingTable();
       }
     }
   }

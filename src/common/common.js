@@ -20,7 +20,6 @@ const sortColumn = (event, datatable, header) => {
         datatable.sort(compareValues(header.value, 'asc'))
         break;
     }
-    console.log(event.target)
   }
 }
 
