@@ -148,11 +148,6 @@ v-container
         isShowed: true,
         highlightId: 0,
         data: {
-          scrollOption: {
-            onStart: function(element) {
-              console.log('abc')
-            },
-          },
           human_resource: {
             data: [
               {
@@ -327,12 +322,7 @@ v-container
     mounted() {
       this.highlightId = 0;
       this.highlightId = this.$route.params.employeeId;
-      console.log(this.highlightId);
-      VueScrollTo.scrollTo(`#item-${this.highlightId}`,500, {
-            onStart: (e) => {
-              // console.log(e.classList.add('highlight'))
-            },
-          });
+      VueScrollTo.scrollTo(`#item-${this.highlightId}`);
     }
   }
 </script>

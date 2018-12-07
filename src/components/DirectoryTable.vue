@@ -26,13 +26,13 @@ div.v-table
   table.v-datatable.v-table.theme--light
     thead.v-table__head
       tr
-        th.text-xs-left.column(v-for='header in table.headers', :class='{sortable: header.sortable ? header.sortable : false}', 
+        th.text-xs-left.column(v-for='header in table.headers', :key='header.value', :class='{sortable: header.sortable ? header.sortable : false}', 
         @click='selectedSort($event, header)',
         sort='none' )
           span {{header.text}}
           v-icon(v-if='header.sortable' size='16px') arrow_upward
     tbody
-      tr(v-for='(employee, index) in table.showData', @click="handleDetail(employee)")
+      tr(v-for='(employee, index) in table.showData', :key='employee.name', @click="handleDetail(employee)")
         td.pa-2
           v-layout.align-center
             v-avatar
