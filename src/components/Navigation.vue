@@ -41,7 +41,7 @@
           v-list-tile-content
             v-list-tile-title Structure
         v-divider
-        v-list-tile(@click="", to='/')
+        v-list-tile(@click="", to='/login')
           v-list-tile-action
             v-icon account_box
           v-list-tile-content
