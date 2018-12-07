@@ -12,7 +12,9 @@
           v-flex.xs12.header-login__title
             p.mb-0 Welcome, 
               span NguyenPham
-          v-btn.xs12(flat) Logout
+          v-flex.xs12
+            router-link(to='/dashboard') Logout
+
 </template>
 
 <script>
