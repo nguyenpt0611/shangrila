@@ -32,7 +32,7 @@
             span {{header.text}}
             v-icon(v-if='header.sortable' size='16px') arrow_upward
       tbody
-        tr(v-for='(employee, index) in table.showData')
+        tr(v-for='(employee, index) in table.showData', @click="handleDetail(employee)")
           td.pa-2
             v-layout.align-center
               v-avatar
@@ -48,7 +48,7 @@
           td 
             v-layout.align-center
               span {{employee.mobile}}
-              v-btn(fab, icon, small, @click.stop="handleDetail(employee)")
+              v-btn(fab, icon, small, @click.stop="handleToStructure(index)")
                 img(src='@/assets/images/icon-detail.png')
     v-layout(align-center).v-datatable.v-table.v-datatable__actions
       v-flex(justify-start).xs4.v-datatable__actions__select
@@ -159,45 +159,45 @@
           data: [
             {
               value: false,
-              name: 'Johnny Turnner1',
-              job: 'Secretary',
+              name: 'Tom 1',
+              job: 'Team leader',
               organisation: 'SLIM - Singapore RHQ',
-              division: 'Human resources1',
+              division: 'Human resources',
               department: 'hr/admin',
-              email: 'miketurner@gmail.com',
+              email: 'tom1@gmail.com',
               phone: '0918765421',
               mobile: '0987654321',
             },
             {
               value: false,
-              name: 'Johnny Turnner2',
-              job: 'Secretary',
+              name: 'Tom 2',
+              job: 'Team leader',
               organisation: 'SLIM - Singapore RHQ',
               division: 'Human resources',
               department: 'hr/admin3',
-              email: 'miketurner@gmail.com',
+              email: 'tom2@gmail.com',
               phone: '0918765421',
               mobile: '0987654321',
             },
             {
               value: false,
-              name: 'Johnny Turnner3s',
-              job: 'Secretary',
+              name: 'Tom 3',
+              job: 'Admin',
               organisation: 'SLIM - Singapore RHQ',
-              division: 'Human resources',
+              division: 'Administrative & General',
               department: 'hr/admin',
-              email: 'miketurner@gmail.com',
+              email: 'tom3@gmail.com',
               phone: '0918765421',
               mobile: '0987654321',
             },
             {
               value: false,
-              name: 'Johnny Turnner',
+              name: 'Tom 4',
               job: 'Secretary',
               organisation: 'SLIM - Singapore RHQ',
-              division: 'Human resources 2',
+              division: 'Development & Projects',
               department: 'hr/admin',
-              email: 'miketurner@gmail.com',
+              email: 'tom4@gmail.com',
               phone: '0918765421',
               mobile: '0987654321',
             },
@@ -283,6 +283,9 @@
       handleDetail(data){
         this.drawer = !this.drawer
         this.selectedData = data;
+      },
+      handleToStructure(id){
+        this.$router.push({ name: 'Structure', params: { employeeId: id+1 } })
       },
       // Sort Table
       selectedSort(event, header) {
