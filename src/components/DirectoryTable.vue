@@ -1,120 +1,120 @@
 <template lang="pug">
-  div.v-table
-    v-layout.row.wrap.v-table__header
-      v-flex.xs12
-        p.table__header--title Browse Directory
-      v-flex.xs6 
-        v-layout.xs6.pa-2
-          img.mt-3.v-table-filter(v-if='isFiltering() == -1', src='@/assets/images/icon-filter.png')
-          img.mt-3.v-table-filter(v-if='isFiltering() > -1', src='@/assets/images/icon-filter-active.png')
-          v-flex(v-for='filter in table.filter.items', :key='filter.key').xs4
-            v-select.ml-3(:label="filter.key", solo=true, multiple=true,
-            :menu-props="{ maxHeight: '400' }",
-            v-model='table.filter.itemsSelected[filter.key]' 
-            :items='filter.data', @change='selectedFilter(filter.key, $event)')
-              div(slot="prepend-item", ripple)
-                a.v-list__tile.v-list__tile--link.theme--light(@click='clearFilter(filter.key)')
-                  a.v-list__title Clear all
-              template(slot='selection', slot-scope="{ item, index }")
-                span(v-if="index === 0") {{item}}  
-                span.grey--text.caption(v-if="index === 1") (+{{ table.filter.itemsSelected[filter.key].length - 1}} others)
-      v-flex.xs6.d-flex.justify-end
-        v-text-field.v-table__search-bar(hide-details,append-icon="search", clearable,single-line, solo, label='Seach', @click:append='handleSearch()', 
-        @keyup.enter='handleSearch()',@click:clear='handleClearSearch()', v-model='table.search.text')
-          v-btn(icon)
-            v-icon search
-    table.v-datatable.v-table.theme--light
-      thead.v-table__head
-        tr
-          th.text-xs-left.column(v-for='header in table.headers', :class='{sortable: header.sortable ? header.sortable : false}', 
-          @click='selectedSort($event, header)',
-          sort='none' )
-            span {{header.text}}
-            v-icon(v-if='header.sortable' size='16px') arrow_upward
-      tbody
-        tr(v-for='(employee, index) in table.showData', @click="handleDetail(employee)")
-          td.pa-2
-            v-layout.align-center
-              v-avatar
-                v-img(:src='imgAvt')
-              span.ml-2 {{employee.name}}
-          td {{employee.job}}
-          td {{employee.organisation}}
-          td {{employee.division}}
-          td {{employee.department}}
-          td 
-            a(:href="'mailto:'+employee.email") {{employee.email}}
-          td {{employee.phone}}
-          td 
-            v-layout.align-center
-              span {{employee.mobile}}
-              v-btn(fab, icon, small, @click.stop="handleToStructure(index)")
-                img(src='@/assets/images/icon-detail.png')
-    v-layout(align-center).v-datatable.v-table.v-datatable__actions
-      v-flex(justify-start).xs4.v-datatable__actions__select
-        v-flex.xs4
-          v-select(label="No field", solo=true, :items='[4, 7, 21]', v-model='page.pageSize', @change='handleChangePageSize()')
-            template(slot="selection",slot-scope="{ item, index }")
-              span Show {{item}} entries
-      v-flex.xs4.v-datatable__actions__range--control
-        div.v-datatable__actions__pagination Showing {{pagination.showFromEntry}} to {{pagination.showToEntry}} of {{table.size}} entries
-      v-flex.xs4.v-datatable__actions__range--control
-        v-flex.v-pagination
-          ul.v-pagination
+div.v-table
+  v-layout.row.wrap.v-table__header
+    v-flex.xs12
+      p.table__header--title Browse Directory
+    v-flex.xs6 
+      v-layout.xs6.pa-2
+        img.mt-3.v-table-filter(v-if='isFiltering() == -1', src='@/assets/images/icon-filter.png')
+        img.mt-3.v-table-filter(v-if='isFiltering() > -1', src='@/assets/images/icon-filter-active.png')
+        v-flex(v-for='filter in table.filter.items', :key='filter.key').xs4
+          v-select.ml-3(:label="filter.key", solo=true, multiple=true,
+          :menu-props="{ maxHeight: '400' }",
+          v-model='table.filter.itemsSelected[filter.key]' 
+          :items='filter.data', @change='selectedFilter(filter.key, $event)')
+            div(slot="prepend-item", ripple)
+              a.v-list__tile.v-list__tile--link.theme--light(@click='clearFilter(filter.key)')
+                a.v-list__title Clear all
+            template(slot='selection', slot-scope="{ item, index }")
+              span(v-if="index === 0") {{item}}  
+              span.grey--text.caption(v-if="index === 1") (+{{ table.filter.itemsSelected[filter.key].length - 1}} others)
+    v-flex.xs6.d-flex.justify-end
+      v-text-field.v-table__search-bar(hide-details,append-icon="search", clearable,single-line, solo, label='Seach', @click:append='handleSearch()', 
+      @keyup.enter='handleSearch()',@click:clear='handleClearSearch()', v-model='table.search.text')
+        v-btn(icon)
+          v-icon search
+  table.v-datatable.v-table.theme--light
+    thead.v-table__head
+      tr
+        th.text-xs-left.column(v-for='header in table.headers', :class='{sortable: header.sortable ? header.sortable : false}', 
+        @click='selectedSort($event, header)',
+        sort='none' )
+          span {{header.text}}
+          v-icon(v-if='header.sortable' size='16px') arrow_upward
+    tbody
+      tr(v-for='(employee, index) in table.showData', @click="handleDetail(employee)")
+        td.pa-2
+          v-layout.align-center
+            v-avatar
+              v-img(:src='imgAvt')
+            span.ml-2 {{employee.name}}
+        td {{employee.job}}
+        td {{employee.organisation}}
+        td {{employee.division}}
+        td {{employee.department}}
+        td 
+          a(:href="'mailto:'+employee.email") {{employee.email}}
+        td {{employee.phone}}
+        td 
+          v-layout.align-center
+            span {{employee.mobile}}
+            v-btn(fab, icon, small, @click.stop="handleToStructure(index)")
+              img(src='@/assets/images/icon-detail.png')
+  v-layout(align-center).v-datatable.v-table.v-datatable__actions
+    v-flex(justify-start).xs4.v-datatable__actions__select
+      v-flex.xs4
+        v-select(label="No field", solo=true, :items='[4, 7, 21]', v-model='page.pageSize', @change='handleChangePageSize()')
+          template(slot="selection",slot-scope="{ item, index }")
+            span Show {{item}} entries
+    v-flex.xs4.v-datatable__actions__range--control
+      div.v-datatable__actions__pagination Showing {{pagination.showFromEntry}} to {{pagination.showToEntry}} of {{table.size}} entries
+    v-flex.xs4.v-datatable__actions__range--control
+      v-flex.v-pagination
+        ul.v-pagination
+          li
+            v-btn.v-pagination-nav(flat, :disabled='page.currentPage == 1 ? true : false', @click='handlePagination(1)') First
+          li
+            v-btn.v-pagination-nav(flat, :disabled='page.currentPage == 1 ? true : false', @click='handlePagination(page.currentPage -= 1)') Previous
+          template(v-for='item in pagination.showSize')
             li
-              v-btn.v-pagination-nav(flat, :disabled='page.currentPage == 1 ? true : false', @click='handlePagination(1)') First
-            li
-              v-btn.v-pagination-nav(flat, :disabled='page.currentPage == 1 ? true : false', @click='handlePagination(page.currentPage -= 1)') Previous
-            template(v-for='item in pagination.showSize')
-              li
-                v-btn(flat, fab, :outline='item == page.currentPage ? true : false', 
-                :color='item == page.currentPage ? "#7D75FF" : "#2c2c2c"',
-                @click='handlePagination(item)').pagination-item {{item}}
-            li
-              v-btn.v-pagination-nav(flat, :disabled='page.currentPage == pagination.showSize ? true : false', @click='handlePagination(page.currentPage += 1)') Next
-            li
-              v-btn.v-pagination-nav(flat, :disabled='page.currentPage == pagination.showSize ? true : false', @click='handlePagination(pagination.showSize)') Last
-    v-navigation-drawer(v-model="drawer",absolute, right, width='440', temporary, hide-overlay)
-      v-container
-        v-layout.column.v-table__nav-drawer
-          v-flex.xs-12
-            v-badge.d-flex.justify-center.v-badge__custom(bottom)
-              img(size='50',src='@/assets/images/icon-detail-badge.png', slot="badge")
-              v-avatar(size='158')
-                img(src='@/assets/images/example_avt.png')
-          v-flex.xs-12
-            v-layout.column.wrap.detail-wrapper
-              v-flex.xs-12.pt-3
-                h6.title Name
-                p.mt-2.title.font-weight-light {{selectedData.name}}
-              v-flex.xs-12.pt-3
-                h6.title Gender
-                p.mt-2.title.font-weight-light {{selectedData.name}}
-              v-flex.xs-12.pt-3
-                h6.title Jobtitle
-                p.mt-2.title.font-weight-light {{selectedData.job}}
-              v-flex.xs-12.pt-3
-                h6.title Organisation
-                p.mt-2.title.font-weight-light {{selectedData.organisation}}
-              v-flex.xs-12.pt-3
-                h6.title Division
-                p.mt-2.title.font-weight-light {{selectedData.division}}
-              v-flex.xs-12.pt-3
-                h6.title Department
-                p.mt-2.title.font-weight-light {{selectedData.department}}
-              v-flex.xs-12.pt-3
-                h6.title Email
-                p.mt-2.title.font-weight-light {{selectedData.email}}
-              v-layout
-                v-flex.xs-6.pt-3
-                  h6.title Direct Dial
-                  p.mt-2.title.font-weight-light {{selectedData.phone}}
-                v-flex.xs-6.pt-3
-                  h6.title Work Mobile
-                  p.mt-2.title.font-weight-light {{selectedData.mobile}}
-              v-layout.xs-12.mt-2.justify-center
-                v-btn.mt4(float, color='#fff', :style="{ width: '85%'}") 
-                  span(:style="{color: '#7D75FF'}") Reporting Manager
+              v-btn(flat, fab, :outline='item == page.currentPage ? true : false', 
+              :color='item == page.currentPage ? "#7D75FF" : "#2c2c2c"',
+              @click='handlePagination(item)').pagination-item {{item}}
+          li
+            v-btn.v-pagination-nav(flat, :disabled='page.currentPage == pagination.showSize ? true : false', @click='handlePagination(page.currentPage += 1)') Next
+          li
+            v-btn.v-pagination-nav(flat, :disabled='page.currentPage == pagination.showSize ? true : false', @click='handlePagination(pagination.showSize)') Last
+  v-navigation-drawer(v-model="drawer",absolute, right, width='440', temporary, hide-overlay)
+    v-container
+      v-layout.column.v-table__nav-drawer
+        v-flex.xs-12
+          v-badge.d-flex.justify-center.v-badge__custom(bottom)
+            img(size='50',src='@/assets/images/icon-detail-badge.png', slot="badge")
+            v-avatar(size='158')
+              img(src='@/assets/images/example_avt.png')
+        v-flex.xs-12
+          v-layout.column.wrap.detail-wrapper
+            v-flex.xs-12.pt-3
+              h6.title Name
+              p.mt-2.title.font-weight-light {{selectedData.name}}
+            v-flex.xs-12.pt-3
+              h6.title Gender
+              p.mt-2.title.font-weight-light {{selectedData.name}}
+            v-flex.xs-12.pt-3
+              h6.title Jobtitle
+              p.mt-2.title.font-weight-light {{selectedData.job}}
+            v-flex.xs-12.pt-3
+              h6.title Organisation
+              p.mt-2.title.font-weight-light {{selectedData.organisation}}
+            v-flex.xs-12.pt-3
+              h6.title Division
+              p.mt-2.title.font-weight-light {{selectedData.division}}
+            v-flex.xs-12.pt-3
+              h6.title Department
+              p.mt-2.title.font-weight-light {{selectedData.department}}
+            v-flex.xs-12.pt-3
+              h6.title Email
+              p.mt-2.title.font-weight-light {{selectedData.email}}
+            v-layout
+              v-flex.xs-6.pt-3
+                h6.title Direct Dial
+                p.mt-2.title.font-weight-light {{selectedData.phone}}
+              v-flex.xs-6.pt-3
+                h6.title Work Mobile
+                p.mt-2.title.font-weight-light {{selectedData.mobile}}
+            v-layout.xs-12.mt-2.justify-center
+              v-btn.mt4(float, color='#fff', :style="{ width: '85%'}") 
+                span(:style="{color: '#7D75FF'}") Reporting Manager
 </template>
 
 <script>

@@ -1,6 +1,6 @@
 <template lang="pug">
-  v-container 
-    DirectoryTable
+v-container 
+  DirectoryTable
 </template>
 
 <script>

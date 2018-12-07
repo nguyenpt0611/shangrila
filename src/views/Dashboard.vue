@@ -1,19 +1,19 @@
 <template lang="pug">
-	v-container.dashboard-container 
-		p.tab-header Favorite
-		v-container(fluid grid-list-sm)
-			v-layout(row wrap)
-				v-flex.align-center(v-for="(fav,index) in favs" :key="`fav-${index}`" xs2) 
-					v-img.margin-auto(:src="getImgUrl(fav.pic)" aspect-ratio="1" max-width="160")
-					span {{fav.title}}
-		v-tabs(vmodel="active" color="white" slider-color="#50349B")
-				v-tab(v-for="tab in tabs" :key="tab.title" ripple active-class="default-class tab-header") {{tab.title}}
-				v-tab-item(v-for="tab in tabs" :key="tab.key")
-					v-container(fluid grid-list-sm)
-						v-layout(row wrap)
-							v-flex.collection-item.align-center.xtra-m-b(v-for="(item,index) in getCollection(tab.key)" :key="`item-${index}`" xs2) 
-								v-img.margin-auto(:src="getImgUrl(item.pic)" aspect-ratio="1" max-width="160")
-								span {{item.title}}
+v-container.dashboard-container 
+	p.tab-header Favorite
+	v-container(fluid grid-list-sm)
+		v-layout(row wrap)
+			v-flex.align-center(v-for="(fav,index) in favs" :key="`fav-${index}`" xs2) 
+				v-img.margin-auto(:src="getImgUrl(fav.pic)" aspect-ratio="1" max-width="160")
+				span {{fav.title}}
+	v-tabs(vmodel="active" color="white" slider-color="#50349B")
+			v-tab(v-for="tab in tabs" :key="tab.title" ripple active-class="default-class tab-header") {{tab.title}}
+			v-tab-item(v-for="tab in tabs" :key="tab.key")
+				v-container(fluid grid-list-sm)
+					v-layout(row wrap)
+						v-flex.collection-item.align-center.xtra-m-b(v-for="(item,index) in getCollection(tab.key)" :key="`item-${index}`" xs2) 
+							v-img.margin-auto(:src="getImgUrl(item.pic)" aspect-ratio="1" max-width="160")
+							span {{item.title}}
 </template>
 <script>
 export default {

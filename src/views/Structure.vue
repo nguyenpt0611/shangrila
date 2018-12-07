@@ -1,18 +1,37 @@
 <template lang='pug'>
-  v-container
-    v-layout.justify-center
-      v-flex.xs12.text-xs-center
-        v-btn.node-root(icon, outline, color='#707070', @click='isShowed = !isShowed')
-          v-icon keyboard_arrow_up
-        v-layout.tree-list(v-if='isShowed')
-          v-flex.column-one.xs4
-            div.position-title.py-2.px-3
-              span.pr-4 Human resource
-              v-icon(color='#fff') person
-              span {{data.human_resource.size}}
-            div.level-one
-              template(v-for='employee in data.human_resource.data')
-                v-card.tree-item(:id="'item-'+employee.id", :class='{highlight: (highlightId == employee.id)}')
+v-container
+  v-layout.justify-center
+    v-flex.xs12.text-xs-center
+      v-btn.node-root(icon, outline, color='#707070', @click='isShowed = !isShowed')
+        v-icon keyboard_arrow_up
+      v-layout.tree-list(v-if='isShowed')
+        v-flex.column-one.xs4
+          div.position-title.py-2.px-3
+            span.pr-4 Human resource
+            v-icon(color='#fff') person
+            span {{data.human_resource.size}}
+          div.level-one
+            template(v-for='employee in data.human_resource.data')
+              v-card.tree-item(:id="'item-'+employee.id", :class='{highlight: (highlightId == employee.id)}')
+                v-layout.column.justify-center.align-center.pa-2  
+                  v-flex.xs12.pt-2.pl-2(:style="{'width':'100%'}")
+                    v-layout
+                      v-flex.xs2.text-xs-left
+                        v-avatar
+                          img(src='@/assets/images/avt.png')
+                      v-flex.xs10.text-xs-left.pa-1.pl-2
+                        h4 {{employee.name}}
+                        h6 {{employee.position}}
+                  v-flex.xs12.pt-2(:style="{'width':'100%'}")
+                    v-card-actions.justify-space-between
+                      v-btn(flat, icon, :href="'mailto:'+employee.email", :title="'Email: '+employee.email")
+                        v-icon(color='#707070') email
+                      v-btn(flat, icon, :href="'tel:'+employee.phone", :title="'Direct dial: '+employee.phone")
+                        v-icon(color='#707070') phone
+                      v-btn(flat, icon, :href="'tel:'+employee.mobile", :title="'Work mobile: '+employee.mobile")
+                        v-icon(color='#707070') phone_iphone
+              div.level-two(v-if='employee.team.length > 0')
+                v-card.tree-item(v-for='teamer in employee.team', :id="'item-'+teamer.id", :class='{highlight: (highlightId == teamer.id)}')
                   v-layout.column.justify-center.align-center.pa-2  
                     v-flex.xs12.pt-2.pl-2(:style="{'width':'100%'}")
                       v-layout
@@ -20,43 +39,43 @@
                           v-avatar
                             img(src='@/assets/images/avt.png')
                         v-flex.xs10.text-xs-left.pa-1.pl-2
-                          h4 {{employee.name}}
-                          h6 {{employee.position}}
+                          h4 {{teamer.name}}
+                          h6 {{teamer.position}}
                     v-flex.xs12.pt-2(:style="{'width':'100%'}")
                       v-card-actions.justify-space-between
-                        v-btn(flat, icon, :href="'mailto:'+employee.email", :title="'Email: '+employee.email")
+                        v-btn(flat, icon, :href="'mailto:'+teamer.email", :title="'Email: '+teamer.email")
                           v-icon(color='#707070') email
-                        v-btn(flat, icon, :href="'tel:'+employee.phone", :title="'Direct dial: '+employee.phone")
+                        v-btn(flat, icon, :href="'tel:'+teamer.phone", :title="'Direct dial: '+teamer.phone")
                           v-icon(color='#707070') phone
-                        v-btn(flat, icon, :href="'tel:'+employee.mobile", :title="'Work mobile: '+employee.mobile")
+                        v-btn(flat, icon, :href="'tel:'+teamer.mobile", :title="'Work mobile: '+teamer.mobile")
                           v-icon(color='#707070') phone_iphone
-                div.level-two(v-if='employee.team.length > 0')
-                  v-card.tree-item(v-for='teamer in employee.team', :id="'item-'+teamer.id", :class='{highlight: (highlightId == teamer.id)}')
-                    v-layout.column.justify-center.align-center.pa-2  
-                      v-flex.xs12.pt-2.pl-2(:style="{'width':'100%'}")
-                        v-layout
-                          v-flex.xs2.text-xs-left
-                            v-avatar
-                              img(src='@/assets/images/avt.png')
-                          v-flex.xs10.text-xs-left.pa-1.pl-2
-                            h4 {{teamer.name}}
-                            h6 {{teamer.position}}
-                      v-flex.xs12.pt-2(:style="{'width':'100%'}")
-                        v-card-actions.justify-space-between
-                          v-btn(flat, icon, :href="'mailto:'+teamer.email", :title="'Email: '+teamer.email")
-                            v-icon(color='#707070') email
-                          v-btn(flat, icon, :href="'tel:'+teamer.phone", :title="'Direct dial: '+teamer.phone")
-                            v-icon(color='#707070') phone
-                          v-btn(flat, icon, :href="'tel:'+teamer.mobile", :title="'Work mobile: '+teamer.mobile")
-                            v-icon(color='#707070') phone_iphone
-          v-flex.column-two.xs4
-            div.position-title.py-2.px-3
-              span.pr-4 Administrative & General
-              v-icon(color='#fff') person
-              span {{data.admin_general.size}}
-            div.level-one
-              template(v-for='employee in data.admin_general.data')
-                v-card.tree-item
+        v-flex.column-two.xs4
+          div.position-title.py-2.px-3
+            span.pr-4 Administrative & General
+            v-icon(color='#fff') person
+            span {{data.admin_general.size}}
+          div.level-one
+            template(v-for='employee in data.admin_general.data')
+              v-card.tree-item
+                v-layout.column.justify-center.align-center.pa-2  
+                  v-flex.xs12.pt-2.pl-2(:style="{'width':'100%'}")
+                    v-layout
+                      v-flex.xs2.text-xs-left
+                        v-avatar
+                          img(src='@/assets/images/avt.png')
+                      v-flex.xs10.text-xs-left.pa-1.pl-2
+                        h4 {{employee.name}}
+                        h6 {{employee.position}}
+                  v-flex.xs12.pt-2(:style="{'width':'100%'}")
+                    v-card-actions.justify-space-between
+                      v-btn(flat, icon, :href="'mailto:'+employee.email", :title="'Email: '+employee.email")
+                        v-icon(color='#707070') email
+                      v-btn(flat, icon, :href="'tel:'+employee.phone", :title="'Direct dial: '+employee.phone")
+                        v-icon(color='#707070') phone
+                      v-btn(flat, icon, :href="'tel:'+employee.mobile", :title="'Work mobile: '+employee.mobile")
+                        v-icon(color='#707070') phone_iphone
+              div.level-two(v-if='employee.team.length > 0')
+                v-card.tree-item(v-for='teamer in employee.team', :id="'item-'+teamer.id", :class='{highlight: (highlightId == teamer.id)}')
                   v-layout.column.justify-center.align-center.pa-2  
                     v-flex.xs12.pt-2.pl-2(:style="{'width':'100%'}")
                       v-layout
@@ -64,43 +83,43 @@
                           v-avatar
                             img(src='@/assets/images/avt.png')
                         v-flex.xs10.text-xs-left.pa-1.pl-2
-                          h4 {{employee.name}}
-                          h6 {{employee.position}}
+                          h4 {{teamer.name}}
+                          h6 {{teamer.position}}
                     v-flex.xs12.pt-2(:style="{'width':'100%'}")
                       v-card-actions.justify-space-between
-                        v-btn(flat, icon, :href="'mailto:'+employee.email", :title="'Email: '+employee.email")
+                        v-btn(flat, icon, :href="'mailto:'+teamer.email", :title="'Email: '+teamer.email")
                           v-icon(color='#707070') email
-                        v-btn(flat, icon, :href="'tel:'+employee.phone", :title="'Direct dial: '+employee.phone")
+                        v-btn(flat, icon, :href="'tel:'+teamer.phone", :title="'Direct dial: '+teamer.phone")
                           v-icon(color='#707070') phone
-                        v-btn(flat, icon, :href="'tel:'+employee.mobile", :title="'Work mobile: '+employee.mobile")
+                        v-btn(flat, icon, :href="'tel:'+teamer.mobile", :title="'Work mobile: '+teamer.mobile")
                           v-icon(color='#707070') phone_iphone
-                div.level-two(v-if='employee.team.length > 0')
-                  v-card.tree-item(v-for='teamer in employee.team', :id="'item-'+teamer.id", :class='{highlight: (highlightId == teamer.id)}')
-                    v-layout.column.justify-center.align-center.pa-2  
-                      v-flex.xs12.pt-2.pl-2(:style="{'width':'100%'}")
-                        v-layout
-                          v-flex.xs2.text-xs-left
-                            v-avatar
-                              img(src='@/assets/images/avt.png')
-                          v-flex.xs10.text-xs-left.pa-1.pl-2
-                            h4 {{teamer.name}}
-                            h6 {{teamer.position}}
-                      v-flex.xs12.pt-2(:style="{'width':'100%'}")
-                        v-card-actions.justify-space-between
-                          v-btn(flat, icon, :href="'mailto:'+teamer.email", :title="'Email: '+teamer.email")
-                            v-icon(color='#707070') email
-                          v-btn(flat, icon, :href="'tel:'+teamer.phone", :title="'Direct dial: '+teamer.phone")
-                            v-icon(color='#707070') phone
-                          v-btn(flat, icon, :href="'tel:'+teamer.mobile", :title="'Work mobile: '+teamer.mobile")
-                            v-icon(color='#707070') phone_iphone
-          v-flex.column-three.xs4
-            div.position-title.py-2.px-3
-              span.pr-4 Development & Projects
-              v-icon(color='#fff') person
-              span {{data.development_project.size}}
-            div.level-one
-              template(v-for='employee in data.development_project.data')
-                v-card.tree-item(:id="'item-'+employee.id", :class='{highlight: highlightId == employee.id}')
+        v-flex.column-three.xs4
+          div.position-title.py-2.px-3
+            span.pr-4 Development & Projects
+            v-icon(color='#fff') person
+            span {{data.development_project.size}}
+          div.level-one
+            template(v-for='employee in data.development_project.data')
+              v-card.tree-item(:id="'item-'+employee.id", :class='{highlight: highlightId == employee.id}')
+                v-layout.column.justify-center.align-center.pa-2  
+                  v-flex.xs12.pt-2.pl-2(:style="{'width':'100%'}")
+                    v-layout
+                      v-flex.xs2.text-xs-left
+                        v-avatar
+                          img(src='@/assets/images/avt.png')
+                      v-flex.xs10.text-xs-left.pa-1.pl-2
+                        h4 {{employee.name}}
+                        h6 {{employee.position}}
+                  v-flex.xs12.pt-2(:style="{'width':'100%'}")
+                    v-card-actions.justify-space-between
+                      v-btn(flat, icon, :href="'mailto:'+employee.email", :title="'Email: '+employee.email")
+                        v-icon(color='#707070') email
+                      v-btn(flat, icon, :href="'tel:'+employee.phone", :title="'Direct dial: '+employee.phone")
+                        v-icon(color='#707070') phone
+                      v-btn(flat, icon, :href="'tel:'+employee.mobile", :title="'Work mobile: '+employee.mobile")
+                        v-icon(color='#707070') phone_iphone
+              div.level-two(v-if='employee.team.length > 0')
+                v-card.tree-item(v-for='teamer in employee.team', :id="'item-'+teamer.id", :class='{highlight: (highlightId == teamer.id)}')
                   v-layout.column.justify-center.align-center.pa-2  
                     v-flex.xs12.pt-2.pl-2(:style="{'width':'100%'}")
                       v-layout
@@ -108,35 +127,16 @@
                           v-avatar
                             img(src='@/assets/images/avt.png')
                         v-flex.xs10.text-xs-left.pa-1.pl-2
-                          h4 {{employee.name}}
-                          h6 {{employee.position}}
+                          h4 {{teamer.name}}
+                          h6 {{teamer.position}}
                     v-flex.xs12.pt-2(:style="{'width':'100%'}")
                       v-card-actions.justify-space-between
-                        v-btn(flat, icon, :href="'mailto:'+employee.email", :title="'Email: '+employee.email")
+                        v-btn(flat, icon, :href="'mailto:'+teamer.email", :title="'Email: '+teamer.email")
                           v-icon(color='#707070') email
-                        v-btn(flat, icon, :href="'tel:'+employee.phone", :title="'Direct dial: '+employee.phone")
+                        v-btn(flat, icon, :href="'tel:'+teamer.phone", :title="'Direct dial: '+teamer.phone")
                           v-icon(color='#707070') phone
-                        v-btn(flat, icon, :href="'tel:'+employee.mobile", :title="'Work mobile: '+employee.mobile")
+                        v-btn(flat, icon, :href="'tel:'+teamer.mobile", :title="'Work mobile: '+teamer.mobile")
                           v-icon(color='#707070') phone_iphone
-                div.level-two(v-if='employee.team.length > 0')
-                  v-card.tree-item(v-for='teamer in employee.team', :id="'item-'+teamer.id", :class='{highlight: (highlightId == teamer.id)}')
-                    v-layout.column.justify-center.align-center.pa-2  
-                      v-flex.xs12.pt-2.pl-2(:style="{'width':'100%'}")
-                        v-layout
-                          v-flex.xs2.text-xs-left
-                            v-avatar
-                              img(src='@/assets/images/avt.png')
-                          v-flex.xs10.text-xs-left.pa-1.pl-2
-                            h4 {{teamer.name}}
-                            h6 {{teamer.position}}
-                      v-flex.xs12.pt-2(:style="{'width':'100%'}")
-                        v-card-actions.justify-space-between
-                          v-btn(flat, icon, :href="'mailto:'+teamer.email", :title="'Email: '+teamer.email")
-                            v-icon(color='#707070') email
-                          v-btn(flat, icon, :href="'tel:'+teamer.phone", :title="'Direct dial: '+teamer.phone")
-                            v-icon(color='#707070') phone
-                          v-btn(flat, icon, :href="'tel:'+teamer.mobile", :title="'Work mobile: '+teamer.mobile")
-                            v-icon(color='#707070') phone_iphone
 </template>
 
 <script>
