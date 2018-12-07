@@ -189,7 +189,7 @@
     max-width: 320px;
     left: -30px;
     top: $space-top/2 - 21;
-    z-index: 999;
+    z-index: 4;
   }
   .column-one {
     &::before {
