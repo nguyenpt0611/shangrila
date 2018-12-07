@@ -1,8 +1,8 @@
 <template lang="pug">
-  v-app
-    Navigation
-    v-content(:style="{'padding-top': '100px'}")
-      router-view
+v-app
+  Navigation
+  v-content(:style="{'padding-top': '100px'}")
+    router-view
 </template>
 
 <script>
